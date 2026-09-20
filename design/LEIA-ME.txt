@@ -1,0 +1,35 @@
+SONGLOG - ETAPA 2: PROJETO DE USABILIDADE E INTERFACES
+======================================================
+
+CONTEUDO DESTE PACOTE
+  01-documento/          PDF com o projeto completo: princípios de UX, cores, tipografia,
+                         componentes, wireframes, acessibilidade, roteiro do Figma e estudo
+                         de UX (personas, jornadas, avaliação heurística, plano de teste).
+  02-telas/              Telas em PNG (2560 x 1600, tema claro): W1 a W6, variantes da
+                         Avaliação (parcial, fórmula aberta) e os temas escuro e alto contraste.
+  03-guia-de-estilo/     guia-de-estilo.png (paleta com contrastes e tipografia),
+                         componentes.png e design-tokens.json (para importar no Figma).
+  04-codigo-fonte/design Fonte editável das telas: abra os .html em qualquer navegador.
+                         Os três temas são trocados por data-theme no CSS (style.css).
+
+TELAS
+  W1 Login/Cadastro · W2 Catálogo · W3 Álbum (cadastro/edição) · W4 Avaliação
+  W5 Perfil e Diário · W6 Estados e diálogos (vazio, erro, exclusão, falha do MySQL)
+
+COMO USAR NO FIGMA
+  O arquivo já está montado (link acima). Para refinar ou refazer:
+  1. Instale as fontes (gratuitas, Google Fonts): Source Serif 4, Inter e JetBrains Mono.
+  2. Crie uma página "Referência" e arraste os PNGs de 02-telas.
+  3. Crie as variáveis de cor (modos Claro, Escuro e Alto contraste) com design-tokens.json
+     (plugin Tokens Studio ou à mão) e refaça as telas com componentes e Auto Layout.
+  4. Passo a passo completo: seção 9 do PDF.
+
+ARQUIVO NO FIGMA (3 páginas: Fundamentos e componentes, Telas, Temas):
+  https://www.figma.com/design/mJEz6Im9a5ICNKt9penidG
+  Observação: o link só abre para quem tiver permissão. Ajuste o compartilhamento no Figma (Share > Anyone with the link can view).
+
+OBSERVAÇÕES
+  - Os dados das telas são ilustrativos. Só "Kind of Blue" usa os números do protótipo da
+    Etapa 1 (nota 4,56; nota geral 4,34). Durações e anos dos demais discos não foram conferidos.
+  - Os contrastes de cor foram calculados por script (WCAG). Leitores de tela não foram testados.
+  - O teste de usabilidade com pessoas (seção 12.5 do PDF) é um plano: ainda não foi executado.

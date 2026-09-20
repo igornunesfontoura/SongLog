@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="claro">
+<head><meta charset="utf-8"><title>W3 · Álbum</title><link rel="stylesheet" href="../style.css"></head>
+<body>
+<div class="win">
+  <header class="top"><div class="brand">SONGLOG</div><nav style="display:flex"><a class="tab on">Catálogo</a><a class="tab">Perfil e Diário</a></nav><div class="who"><span>Ana Ribeiro</span><u>Sair</u></div></header>
+  <main class="page">
+    <div class="crumb"><u>Catálogo</u> &nbsp;/&nbsp; <u>Kind of Blue</u> &nbsp;/&nbsp; Editar</div>
+    <div class="head"><h1>Editar álbum</h1></div>
+    <div style="display:grid;grid-template-columns:400px 1fr;gap:48px;padding-top:24px;flex:1;min-height:0">
+      <div>
+        <div class="label" style="margin-bottom:16px">Dados do álbum</div>
+        <div class="campo"><label class="lbl">Título *</label><div class="inp">Kind of Blue</div></div>
+        <div class="campo"><label class="lbl">Artista *</label><div class="inp">Miles Davis</div></div>
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:16px" class="campo">
+          <div><label class="lbl">Ano *</label><div class="inp mono">1959</div></div>
+          <div><label class="lbl">Gênero</label><div class="inp">Jazz</div></div>
+        </div>
+        <p class="small mute">* obrigatório</p>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:16px">Faixas</div>
+        <table class="tbl">
+          <thead><tr><th class="n" style="padding-left:16px">#</th><th>Título</th><th class="n">Duração (m:ss)</th><th></th></tr></thead>
+          <tbody><tr><td class="n" style="width:48px;padding-left:16px">1</td><td><div class="inp">So What</div></td><td style="width:130px"><div class="inp mono" style="justify-content:flex-end">9:22</div></td><td style="width:110px"><a class="btn s" style="height:32px;min-width:0">Remover</a></td></tr><tr><td class="n" style="width:48px;padding-left:16px">2</td><td><div class="inp">Freddie Freeloader</div></td><td style="width:130px"><div class="inp mono" style="justify-content:flex-end">9:46</div></td><td style="width:110px"><a class="btn s" style="height:32px;min-width:0">Remover</a></td></tr><tr><td class="n" style="width:48px;padding-left:16px">3</td><td><div class="inp">Blue in Green</div></td><td style="width:130px"><div class="inp mono" style="justify-content:flex-end">5:37</div></td><td style="width:110px"><a class="btn s" style="height:32px;min-width:0">Remover</a></td></tr><tr><td class="n" style="width:48px;padding-left:16px">4</td><td><div class="inp">All Blues</div></td><td style="width:130px"><div class="inp mono" style="justify-content:flex-end">11:33</div></td><td style="width:110px"><a class="btn s" style="height:32px;min-width:0">Remover</a></td></tr><tr><td class="n" style="width:48px;padding-left:16px">5</td><td><div class="inp">Flamenco Sketches</div></td><td style="width:130px"><div class="inp mono" style="justify-content:flex-end">9:26</div></td><td style="width:110px"><a class="btn s" style="height:32px;min-width:0">Remover</a></td></tr><tr><td class="n" style="padding-left:16px">6</td><td><div class="inp ph foco">Título da faixa</div></td><td><div class="inp mono ph" style="justify-content:flex-end">m:ss</div></td><td></td></tr></tbody>
+        </table>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <a class="btn s">Adicionar faixa</a><span class="mono small">Total: 5 faixas · 45:44</span>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:2px solid var(--ink);height:60px;display:flex;align-items:center;justify-content:space-between">
+      <a class="btn s">Excluir álbum</a>
+      <div style="display:flex;gap:12px"><a class="btn s">Cancelar</a><a class="btn p">Salvar álbum</a></div>
+    </div>
+  </main>
+  <footer class="status"><span>Alterações não salvas.</span></footer>
+</div></body>
+</html>

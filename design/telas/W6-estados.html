@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="claro">
+<head><meta charset="utf-8"><title>W6 · Estados</title><link rel="stylesheet" href="../style.css"></head>
+<body>
+<div style="padding:28px 40px;width:1280px;height:800px">
+  <h1 style="margin-bottom:20px;font-size:32px;line-height:36px">Estados e diálogos</h1>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 32px">
+    <div><div class="label" style="margin-bottom:8px">a) Catálogo vazio</div><div style="border:2px solid var(--ink);height:296px;overflow:hidden;background:var(--bg)"><div style="padding:20px 28px"><div style="display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:12px;border-bottom:2px solid var(--ink)"><h2>Catálogo</h2><a class="btn p">Novo álbum</a></div>
+      <p style="margin-top:56px;font-weight:600">Nenhum álbum cadastrado ainda.</p>
+      <p style="margin-top:4px;color:var(--ink-2)">Cadastre o primeiro álbum para começar a avaliar faixa por faixa.</p>
+      <div style="margin-top:20px"><a class="btn s">Cadastrar álbum</a></div></div></div></div><div><div class="label" style="margin-bottom:8px">b) Erros de validação</div><div style="border:2px solid var(--ink);height:296px;overflow:hidden;background:var(--bg)"><div style="padding:20px 28px">
+      <div class="campo" style="width:340px"><label class="lbl">Título *</label><div class="inp err"></div><p class="msg"><b>Erro:</b> informe o título do álbum.</p></div>
+      <div class="campo" style="width:160px"><label class="lbl">Duração *</label><div class="inp err mono">9:75</div></div>
+      <p class="msg" style="margin-top:-12px"><b>Erro:</b> use o formato m:ss, com segundos de 00 a 59 (ex.: 9:22).</p>
+      <p class="small mute" style="margin-top:14px">Erro identificado por texto e por borda de 2 px, nunca só por cor.</p></div></div></div>
+    <div><div class="label" style="margin-bottom:8px">c) Confirmação de exclusão (foco inicial em Cancelar)</div><div style="border:2px solid var(--ink);height:296px;overflow:hidden;background:var(--bg)"><div style="padding:28px 40px"><div class="dialogo" style="width:520px">
+      <h2 style="font-size:22px">Excluir “Kind of Blue”?</h2>
+      <p style="margin-top:10px">Serão excluídas as 5 faixas, as 96 avaliações dessas faixas e as 2 entradas de diário deste álbum. Esta ação não pode ser desfeita.</p>
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px"><a class="btn s foco">Cancelar</a><a class="btn p">Excluir álbum</a></div></div></div></div></div><div><div class="label" style="margin-bottom:8px">d) Falha de conexão com o MySQL</div><div style="border:2px solid var(--ink);height:296px;overflow:hidden;background:var(--bg)"><div><div class="banner" style="padding:12px 28px"><b>[!]</b><span class="msg-b">Não foi possível conectar ao banco de dados MySQL (localhost:3306). Verifique se o serviço está ativo.</span><a class="btn s" style="height:32px">Tentar novamente</a></div>
+      <div style="padding:20px 28px;color:var(--ink-2)"><h2 style="color:var(--ink)">Catálogo</h2><p class="small" style="margin-top:8px">Conteúdo em modo leitura até a conexão voltar.</p></div></div></div></div>
+  </div>
+</div></body>
+</html>
