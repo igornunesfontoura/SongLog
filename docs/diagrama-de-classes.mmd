@@ -1,0 +1,65 @@
+classDiagram
+    direction LR
+
+    class Usuario {
+        -int id
+        -String nome
+        -String email
+        -String senhaHash
+        -LocalDate dataCadastro
+        +avaliar(Faixa, double, String) Avaliacao
+        +getAvaliacaoDe(Faixa) Optional~Avaliacao~
+        +registrarAudicao(Album, LocalDate, String) EntradaDiario
+        +getAvaliacoes() List~Avaliacao~
+        +getDiario() List~EntradaDiario~
+    }
+
+    class Album {
+        -int id
+        -String titulo
+        -String artista
+        -int anoLancamento
+        -String genero
+        +adicionarFaixa(String, int) Faixa
+        +getTotalFaixas() int
+        +getDuracaoTotalSegundos() int
+        +getFaixas() List~Faixa~
+    }
+
+    class Faixa {
+        -int id
+        -int numero
+        -String titulo
+        -int duracaoSegundos
+        +getDuracaoFormatada() String
+    }
+
+    class Avaliacao {
+        -int id
+        -double nota
+        -String comentario
+        -LocalDateTime dataAvaliacao
+        +validarNota(double)$ void
+        +atualizar(double, String) void
+    }
+
+    class EntradaDiario {
+        -int id
+        -LocalDate dataAudicao
+        -String comentario
+        -boolean reaudicao
+    }
+
+    class NotaService {
+        <<utility>>
+        +notaDoUsuario(Album, Usuario)$ Optional~NotaAlbum~
+        +notaGeral(Album, Collection~Usuario~)$ Optional~NotaGeral~
+    }
+
+    Album "1" *-- "1..*" Faixa : possui
+    Usuario "1" *-- "0..*" Avaliacao : faz
+    Avaliacao "0..*" --> "1" Faixa : avalia
+    Usuario "1" *-- "0..*" EntradaDiario : registra
+    EntradaDiario "0..*" --> "1" Album : refere-se a
+    NotaService ..> Album : usa
+    NotaService ..> Usuario : usa

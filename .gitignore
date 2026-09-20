@@ -1,0 +1,19 @@
+# Build
+target/
+*.class
+
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+nb-configuration.xml
+.nb-gradle/
+
+# Outros IDEs / SO
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Segredos locais (Etapa 3: credenciais do MySQL)
+*.local.properties
