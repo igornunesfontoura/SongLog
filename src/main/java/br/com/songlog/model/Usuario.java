@@ -68,6 +68,33 @@ public class Usuario {
         return entrada;
     }
 
+    /** "Limpar" na tela de avaliação: remove a nota da faixa, se existir. */
+    public boolean removerAvaliacao(Faixa faixa) {
+        return avaliacoes.removeIf(a -> a.getFaixa().equals(faixa));
+    }
+
+    /** RN13: faixas excluídas levam junto as avaliações. */
+    public void removerAvaliacoesDasFaixas(java.util.Collection<Faixa> faixas) {
+        avaliacoes.removeIf(a -> faixas.contains(a.getFaixa()));
+    }
+
+    /** RN13: álbum excluído leva junto as entradas de diário. */
+    public void removerEntradasDoAlbum(Album album) {
+        diario.removeIf(e -> e.getAlbum().equals(album));
+    }
+
+    public boolean removerEntrada(EntradaDiario entrada) {
+        return diario.remove(entrada);
+    }
+
+    /** Avaliações mais recentes primeiro. */
+    public List<Avaliacao> getUltimasAvaliacoes(int limite) {
+        return avaliacoes.stream()
+                .sorted(Comparator.comparing(Avaliacao::getDataAvaliacao).reversed())
+                .limit(limite)
+                .toList();
+    }
+
     public List<Avaliacao> getAvaliacoes() {
         return Collections.unmodifiableList(avaliacoes);
     }

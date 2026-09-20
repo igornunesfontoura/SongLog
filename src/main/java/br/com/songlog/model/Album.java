@@ -40,6 +40,15 @@ public class Album {
         return faixa;
     }
 
+    /** Remove a faixa e refaz a numeração (RN01). */
+    public boolean removerFaixa(Faixa faixa) {
+        boolean removida = faixas.remove(faixa);
+        for (int i = 0; i < faixas.size(); i++) {
+            faixas.get(i).renumerar(i + 1);
+        }
+        return removida;
+    }
+
     public int getTotalFaixas() {
         return faixas.size();
     }

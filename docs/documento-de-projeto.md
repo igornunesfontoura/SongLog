@@ -249,21 +249,32 @@ classDiagram
 
 ```
 br.com.songlog
-├── Main                      ponto de entrada (protótipo na Etapa 1; abre a janela quando as telas existirem)
+├── Main                      ponto de entrada da aplicação gráfica (Swing)
+├── PrototipoConsole          protótipo em console da Etapa 1
 ├── model                     domínio: só dados e regras do próprio objeto
 │   ├── Usuario
 │   ├── Album
 │   ├── Faixa
 │   ├── Avaliacao
 │   └── EntradaDiario
-├── service                   regras que envolvem mais de um objeto
-│   └── NotaService
+├── service                   regras que envolvem mais de um objeto (sem Swing, sem SQL)
+│   ├── NotaService           nota ponderada do usuário e nota geral
+│   ├── CatalogoService       busca, validação e salvamento de álbuns, exclusão em cascata
+│   ├── AutenticacaoService   login e cadastro
+│   ├── PerfilService         diário e estatísticas do perfil
+│   ├── ValidacaoException
+│   └── Contexto              reúne repositórios, serviços e o usuário logado
+├── repositorio               acesso aos dados (interfaces + implementação em memória)
+│   ├── AlbumRepositorio / UsuarioRepositorio
+│   ├── AlbumMemoria / UsuarioMemoria
+│   └── DadosIniciais         dados de demonstração
 ├── util
-│   ├── Validacao             validação de texto de entrada
-│   ├── Tempo                 segundos → "m:ss"
-│   └── SenhaUtil             hash de senha (PBKDF2)
-├── dao          (futuro)     JDBC: UsuarioDAO, AlbumDAO, FaixaDAO, AvaliacaoDAO, DiarioDAO
-└── view         (futuro)     Swing: TelaLogin, TelaCatalogo, TelaAvaliacao, TelaPerfilDiario
+│   ├── Validacao, Tempo, Formatos, SenhaUtil
+└── view                      interface Swing (só monta telas e chama os serviços)
+    ├── Janela, Navegador, Tela, Tema, Fontes, Preferencias, Ui
+    ├── TelaLogin, TelaCatalogo, TelaAlbum, TelaAvaliacao, TelaPerfilDiario
+    ├── componentes/          Botao, Campo, CampoSenha, Seletor, Tag, BarraDeNota, barras, Rolagem
+    └── dialogo/              DialogoBase, Dialogos
 ```
 
 | Classe | Responsabilidade | Colaboradores |
@@ -298,5 +309,6 @@ Design editorial, com traço brutalista refinado. A tela é um documento, não u
 | Etapa | Entrega | Situação |
 |---|---|---|
 | 1 | Documento de projeto, diagrama de classes e esqueleto em Java | Concluída |
-| 2 | UX/UI: orientações, wireframes, esquema de cores e acessibilidade | Em andamento |
-| 3 a 5 | Definidas conforme o enunciado de cada etapa | — |
+| 2 | UX/UI: orientações, wireframes, esquema de cores e acessibilidade | Concluída |
+| 3 | Programação das telas em Java, com dados em memória (sem banco) | Concluída |
+| 4 e 5 | Definidas conforme o enunciado de cada etapa | — |

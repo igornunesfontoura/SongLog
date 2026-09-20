@@ -10,7 +10,7 @@ import br.com.songlog.util.Validacao;
 public class Faixa {
 
     private int id;
-    private final int numero;
+    private int numero;
     private String titulo;
     private int duracaoSegundos;
 
@@ -41,6 +41,11 @@ public class Faixa {
 
     public int getNumero() {
         return numero;
+    }
+
+    /** Uso interno do Album: refaz a numeração sequencial (RN01). */
+    void renumerar(int novoNumero) {
+        this.numero = novoNumero;
     }
 
     public String getTitulo() {
