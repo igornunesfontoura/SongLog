@@ -4,7 +4,7 @@ import static br.com.songlog.view.Preferencias.px;
 
 import br.com.songlog.model.Album;
 import br.com.songlog.service.Contexto;
-import br.com.songlog.service.NotaService;
+import br.com.songlog.model.NotaGeral;
 import br.com.songlog.util.Formatos;
 import br.com.songlog.view.Fontes.Estilo;
 import br.com.songlog.view.componentes.Botao;
@@ -302,8 +302,10 @@ public class TelaCatalogo extends JPanel implements Tela {
         String g = genero.getSelectedIndex() <= 0 ? "" : String.valueOf(genero.getSelectedItem());
         filtrados = new ArrayList<>(ctx.catalogo.buscar(busca.getText(), g));
         notasGerais.clear();
-        for (Album a : ctx.catalogo.todos()) {
-            notasGerais.put(a, NotaService.notaGeral(a, ctx.usuarios.todos()).map(n -> Formatos.nota2(n.valor())).orElse("—"));
+        Map<Integer, NotaGeral> geral = ctx.albuns.notasGerais(); // uma consulta à view vw_nota_geral_album
+        for (Album a : filtrados) {
+            NotaGeral n = geral.get(a.getId());
+            notasGerais.put(a, n == null ? "—" : Formatos.nota2(n.valor()));
         }
         filtrados.sort(comparador());
         int total = ctx.catalogo.todos().size();

@@ -1,0 +1,44 @@
+erDiagram
+    USUARIO ||--o{ ENTRADA_DIARIO : "registra"
+    ALBUM ||--o{ ENTRADA_DIARIO : "é ouvido em"
+    ALBUM ||--|{ FAIXA : "possui"
+    FAIXA ||--o{ AVALIACAO : "recebe"
+    USUARIO ||--o{ AVALIACAO : "faz"
+
+    USUARIO {
+        int id PK
+        varchar nome
+        varchar email UK
+        varchar senha_hash
+        date data_cadastro
+    }
+    ALBUM {
+        int id PK
+        varchar titulo
+        varchar artista
+        smallint ano_lancamento
+        varchar genero
+    }
+    FAIXA {
+        int id PK
+        int album_id FK
+        smallint numero
+        varchar titulo
+        int duracao_segundos
+    }
+    AVALIACAO {
+        int id PK
+        int usuario_id FK
+        int faixa_id FK
+        decimal nota
+        varchar comentario
+        datetime data_avaliacao
+    }
+    ENTRADA_DIARIO {
+        int id PK
+        int usuario_id FK
+        int album_id FK
+        date data_audicao
+        varchar comentario
+        boolean reaudicao
+    }

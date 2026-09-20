@@ -4,11 +4,11 @@ import br.com.songlog.model.Album;
 import br.com.songlog.model.Avaliacao;
 import br.com.songlog.model.Faixa;
 import br.com.songlog.model.Usuario;
-import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Regras de cálculo das notas de álbum (RN04 e RN05 do documento de projeto).
+ * Nota ponderada de um usuário para um álbum (RN05 e RN06). A nota geral (RN07) é calculada
+ * pelo banco, na view vw_nota_geral_album, e chega pelo AlbumRepositorio.
  */
 public final class NotaService {
 
@@ -17,10 +17,6 @@ public final class NotaService {
         public boolean completa() {
             return faixasAvaliadas == totalFaixas;
         }
-    }
-
-    /** Nota geral do álbum: média das notas dos usuários que avaliaram todas as faixas. */
-    public record NotaGeral(double valor, int totalAvaliadores) {
     }
 
     private NotaService() {
@@ -48,27 +44,5 @@ public final class NotaService {
             return Optional.empty();
         }
         return Optional.of(new NotaAlbum(somaPonderada / somaPesos, avaliadas, album.getTotalFaixas()));
-    }
-
-    /**
-     * Média simples das notas de álbum dos usuários com avaliação completa.
-     * Avaliações parciais ficam de fora para não distorcer o resultado.
-     */
-    public static Optional<NotaGeral> notaGeral(Album album, Collection<Usuario> usuarios) {
-        double soma = 0;
-        int avaliadores = 0;
-
-        for (Usuario usuario : usuarios) {
-            Optional<NotaAlbum> nota = notaDoUsuario(album, usuario);
-            if (nota.isPresent() && nota.get().completa()) {
-                soma += nota.get().valor();
-                avaliadores++;
-            }
-        }
-
-        if (avaliadores == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(new NotaGeral(soma / avaliadores, avaliadores));
     }
 }

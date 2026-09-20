@@ -4,6 +4,7 @@ import br.com.songlog.model.Album;
 import br.com.songlog.model.Avaliacao;
 import br.com.songlog.model.EntradaDiario;
 import br.com.songlog.model.Usuario;
+import br.com.songlog.repositorio.DiarioRepositorio;
 import br.com.songlog.util.Formatos;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -14,6 +15,12 @@ import java.util.Set;
 public class PerfilService {
 
     public record Estatisticas(int albunsOuvidos, int faixasAvaliadas, OptionalDouble notaMedia, int reaudicoes) {
+    }
+
+    private final DiarioRepositorio diario;
+
+    public PerfilService(DiarioRepositorio diario) {
+        this.diario = diario;
     }
 
     public Estatisticas estatisticas(Usuario u) {
@@ -35,17 +42,22 @@ public class PerfilService {
         }
         LocalDate data = interpretarData(dataTexto);
         validarComentario(comentario);
-        return u.registrarAudicao(album, data, comentario);
+        EntradaDiario entrada = u.novaEntrada(album, data, comentario); // marca a reaudição (RN09)
+        diario.inserir(entrada);
+        u.adicionarEntrada(entrada);
+        return entrada;
     }
 
     public void editarEntrada(EntradaDiario entrada, String dataTexto, String comentario) {
         LocalDate data = interpretarData(dataTexto);
         validarComentario(comentario);
+        diario.atualizar(entrada, data, comentario);
         entrada.setDataAudicao(data);
         entrada.setComentario(comentario);
     }
 
     public void excluirEntrada(Usuario u, EntradaDiario entrada) {
+        diario.excluir(entrada);
         u.removerEntrada(entrada);
     }
 

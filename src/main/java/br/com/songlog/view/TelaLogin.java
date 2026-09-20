@@ -3,7 +3,6 @@ package br.com.songlog.view;
 import static br.com.songlog.view.Preferencias.px;
 
 import br.com.songlog.model.Usuario;
-import br.com.songlog.repositorio.DadosIniciais;
 import br.com.songlog.service.Contexto;
 import br.com.songlog.service.ValidacaoException;
 import br.com.songlog.view.Fontes.Estilo;
@@ -32,6 +31,9 @@ import javax.swing.SwingWorker;
  * e o formulário sobre o papel. O hash de senha (PBKDF2) roda fora da thread da interface.
  */
 public class TelaLogin extends JPanel implements Tela {
+
+    /** Senha dos usuários de demonstração do script banco/02-dados-iniciais.sql. */
+    private static final String SENHA_DEMO = "songlog123";
 
     private final Navegador nav;
     private final Contexto ctx;
@@ -90,7 +92,7 @@ public class TelaLogin extends JPanel implements Tela {
         JLabel l2 = Ui.texto("soma das faixas.", Estilo.H1, t.bg, 64);
         JLabel s1 = Ui.texto("Avalie faixa por faixa.", Estilo.BODY, t.surface, 16);
         JLabel s2 = Ui.texto("Registre o que ouviu.", Estilo.BODY, t.surface, 16);
-        JLabel versao = Ui.texto("v0.3.0", Estilo.MONO, t.surface, 13);
+        JLabel versao = Ui.texto("v0.4.0", Estilo.MONO, t.surface, 13);
 
         for (JComponent j : new JComponent[] { marca, l1, l2, s1, s2, versao }) {
             j.setAlignmentX(LEFT_ALIGNMENT);
@@ -199,7 +201,7 @@ public class TelaLogin extends JPanel implements Tela {
         formulario.add(Ui.coluna(rodape));
         if (!cadastro) {
             formulario.add(Ui.espaco(0, 20));
-            JLabel demo = Ui.texto("Demonstração: ana@songlog.dev  ·  senha " + DadosIniciais.SENHA_DEMO, Estilo.SMALL, t.mute);
+            JLabel demo = Ui.texto("Demonstração: ana@songlog.dev  ·  senha " + SENHA_DEMO, Estilo.SMALL, t.mute);
             formulario.add(Ui.coluna(demo));
         }
 
@@ -247,6 +249,8 @@ public class TelaLogin extends JPanel implements Tela {
                     nav.status("");
                     if (ex.getCause() instanceof ValidacaoException v) {
                         mostrarErro(v);
+                    } else if (ex.getCause() instanceof br.com.songlog.banco.BancoException b) {
+                        erroGeral.mostrar(b.getMessage());
                     } else {
                         erroGeral.mostrar("não foi possível concluir. Tente novamente.");
                     }

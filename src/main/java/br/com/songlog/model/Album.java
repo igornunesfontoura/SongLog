@@ -40,6 +40,17 @@ public class Album {
         return faixa;
     }
 
+    /** Camada de dados: acrescenta uma faixa que já vem numerada e com id do banco. */
+    public void carregarFaixa(Faixa faixa) {
+        for (Faixa f : faixas) {
+            if (f.getNumero() == faixa.getNumero()) {
+                throw new IllegalStateException("Faixa " + faixa.getNumero() + " repetida no álbum " + titulo);
+            }
+        }
+        faixas.add(faixa);
+        faixas.sort(java.util.Comparator.comparingInt(Faixa::getNumero));
+    }
+
     /** Remove a faixa e refaz a numeração (RN01). */
     public boolean removerFaixa(Faixa faixa) {
         boolean removida = faixas.remove(faixa);

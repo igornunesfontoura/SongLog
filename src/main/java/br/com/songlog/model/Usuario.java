@@ -61,11 +61,36 @@ public class Usuario {
      * Registra uma audição no diário. É marcada como reaudição se o álbum já consta no diário.
      */
     public EntradaDiario registrarAudicao(Album album, LocalDate data, String comentario) {
-        Objects.requireNonNull(album, "album");
-        boolean reaudicao = diario.stream().anyMatch(e -> e.getAlbum().equals(album));
-        EntradaDiario entrada = new EntradaDiario(this, album, data, comentario, reaudicao);
+        EntradaDiario entrada = novaEntrada(album, data, comentario);
         diario.add(entrada);
         return entrada;
+    }
+
+    /** Cria a entrada (já marcando a reaudição) sem incluí-la no diário: quem grava no banco a inclui depois. */
+    public EntradaDiario novaEntrada(Album album, LocalDate data, String comentario) {
+        Objects.requireNonNull(album, "album");
+        boolean reaudicao = diario.stream().anyMatch(e -> e.getAlbum().equals(album));
+        return new EntradaDiario(this, album, data, comentario, reaudicao);
+    }
+
+    public void adicionarEntrada(EntradaDiario entrada) {
+        diario.add(entrada);
+    }
+
+    /** Camada de dados: acrescenta uma entrada lida do banco. */
+    public void carregarEntrada(EntradaDiario entrada) {
+        diario.add(entrada);
+    }
+
+    /** Camada de dados: acrescenta uma avaliação lida do banco. */
+    public void carregarAvaliacao(Avaliacao avaliacao) {
+        avaliacoes.add(avaliacao);
+    }
+
+    /** Guarda em memória uma avaliação já gravada no banco, substituindo a anterior da mesma faixa. */
+    public void aplicarAvaliacao(Avaliacao avaliacao) {
+        avaliacoes.removeIf(a -> a.getFaixa().equals(avaliacao.getFaixa()));
+        avaliacoes.add(avaliacao);
     }
 
     /** "Limpar" na tela de avaliação: remove a nota da faixa, se existir. */

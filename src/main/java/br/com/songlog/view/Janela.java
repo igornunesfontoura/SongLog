@@ -113,11 +113,13 @@ public class Janela extends JFrame implements Navegador {
 
     @Override
     public void irParaAvaliacao(Album album) {
+        ctx.recarregarUsuario(); // notas e diário sempre frescos, vindos do banco
         mostrar(new TelaAvaliacao(this, album), Aba.CATALOGO, album.getTitulo(), () -> irParaAvaliacao(album));
     }
 
     @Override
     public void irParaPerfil() {
+        ctx.recarregarUsuario();
         mostrar(new TelaPerfilDiario(this), Aba.PERFIL, "Perfil e Diário", this::irParaPerfil);
     }
 

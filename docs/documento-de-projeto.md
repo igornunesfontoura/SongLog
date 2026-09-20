@@ -99,7 +99,7 @@ Três funcionalidades centrais (uma tela cada), mais o acesso à conta.
 |---|---|
 | **RNF01** | **Plataforma:** aplicação desktop nativa em Java 17+, interface Swing, projeto Maven aberto no NetBeans. |
 | **RNF02** | **Persistência:** MySQL 8 local, acessado por JDBC (MySQL Connector/J). |
-| **RNF03** | **Arquitetura em camadas:** `model` (domínio), `service` (regras), `dao` (acesso a dados) e `view` (telas). A interface não contém SQL nem regras de negócio. |
+| **RNF03** | **Arquitetura em camadas:** `model` (domínio), `service` (regras), `repositorio` (acesso a dados, com JDBC) e `view` (telas). A interface não contém SQL nem regras de negócio. |
 | **RNF04** | **Segurança:** consultas com `PreparedStatement` (sem concatenação de SQL); senhas com hash e salt; credenciais do banco fora do repositório. |
 | **RNF05** | **Integridade:** chaves estrangeiras e restrições `UNIQUE` no banco espelhando as regras RN01, RN02, RN04 e RN11. |
 | **RNF06** | **Usabilidade:** interface limpa, tipografia legível, navegação por teclado nos formulários, mensagens de erro em português e específicas. |
@@ -111,7 +111,7 @@ Três funcionalidades centrais (uma tela cada), mais o acesso à conta.
 
 ## 8. Tipos de registro armazenados
 
-Cinco entidades. Tipos já pensados para o MySQL (o script de criação do banco será produzido junto com a camada de acesso a dados).
+Cinco entidades. Tipos e restrições implementados em [`banco/01-esquema.sql`](../banco/01-esquema.sql) (Etapa 4); diagrama entidade-relacionamento em [`banco/diagrama-er.png`](../banco/diagrama-er.png).
 
 ### `Usuario`
 | Campo | Tipo | Restrições |
@@ -250,31 +250,36 @@ classDiagram
 ```
 br.com.songlog
 ├── Main                      ponto de entrada da aplicação gráfica (Swing)
-├── PrototipoConsole          protótipo em console da Etapa 1
+├── banco                     conexão com o MySQL
+│   ├── Configuracao          lê host, porta, usuário e senha (config/, variáveis de ambiente)
+│   ├── Banco                 abre conexões; cria banco, tabelas e dados de teste na 1ª vez
+│   ├── ScriptSql             executa os scripts de banco/
+│   └── BancoException        erros do MySQL traduzidos para o usuário
 ├── model                     domínio: só dados e regras do próprio objeto
 │   ├── Usuario
 │   ├── Album
 │   ├── Faixa
 │   ├── Avaliacao
-│   └── EntradaDiario
+│   ├── EntradaDiario
+│   └── NotaGeral
 ├── service                   regras que envolvem mais de um objeto (sem Swing, sem SQL)
-│   ├── NotaService           nota ponderada do usuário e nota geral
+│   ├── NotaService           nota ponderada do usuário (a geral vem da view do banco)
 │   ├── CatalogoService       busca, validação e salvamento de álbuns, exclusão em cascata
+│   ├── AvaliacaoService      gravar, comentar e limpar a nota de uma faixa
 │   ├── AutenticacaoService   login e cadastro
 │   ├── PerfilService         diário e estatísticas do perfil
 │   ├── ValidacaoException
 │   └── Contexto              reúne repositórios, serviços e o usuário logado
-├── repositorio               acesso aos dados (interfaces + implementação em memória)
-│   ├── AlbumRepositorio / UsuarioRepositorio
-│   ├── AlbumMemoria / UsuarioMemoria
-│   └── DadosIniciais         dados de demonstração
+├── repositorio               contratos de acesso aos dados
+│   ├── AlbumRepositorio / UsuarioRepositorio / AvaliacaoRepositorio / DiarioRepositorio
+│   └── jdbc/                 AlbumJdbc, UsuarioJdbc, AvaliacaoJdbc, DiarioJdbc (PreparedStatement)
 ├── util
 │   ├── Validacao, Tempo, Formatos, SenhaUtil
 └── view                      interface Swing (só monta telas e chama os serviços)
     ├── Janela, Navegador, Tela, Tema, Fontes, Preferencias, Ui
     ├── TelaLogin, TelaCatalogo, TelaAlbum, TelaAvaliacao, TelaPerfilDiario
     ├── componentes/          Botao, Campo, CampoSenha, Seletor, Tag, BarraDeNota, barras, Rolagem
-    └── dialogo/              DialogoBase, Dialogos
+    └── dialogo/              DialogoBase, Dialogos, DialogoConexao
 ```
 
 | Classe | Responsabilidade | Colaboradores |
@@ -284,11 +289,11 @@ br.com.songlog
 | `Faixa` | Título, número e duração (que é o peso do cálculo). | — |
 | `Avaliacao` | Nota de um usuário para uma faixa; valida a escala (RN03). | `Usuario`, `Faixa` |
 | `EntradaDiario` | Uma audição datada; valida a data (RN10). | `Usuario`, `Album` |
-| `NotaService` | Nota ponderada por usuário (RN05/06) e nota geral (RN07). | `Album`, `Usuario` |
+| `NotaService` | Nota ponderada do usuário (RN05/06); a nota geral (RN07) vem da view `vw_nota_geral_album`. | `Album`, `Usuario` |
 
-**Por que `NotaService` fora das entidades?** A nota geral depende de vários usuários; nenhuma entidade sozinha é dona desse cálculo. Com o banco integrado, o mesmo resultado poderá ser obtido por uma consulta SQL agregada; a classe fica como a especificação executável da regra.
+**Por que `NotaService` fora das entidades?** A nota geral depende de vários usuários; nenhuma entidade sozinha é dona desse cálculo. Com o banco integrado (Etapa 4), a nota geral passou a ser calculada por uma view SQL agregada; em Java ficou só a nota do usuário, usada para atualizar a tela ao vivo, e um teste confere que as duas dão o mesmo resultado.
 
-**Igualdade de entidades.** `Faixa` e `Album` comparam por `id` (a chave do banco). Objetos ainda não salvos (`id == 0`) comparam por identidade. O `Main` simula os ids que o MySQL atribuirá.
+**Igualdade de entidades.** `Faixa` e `Album` comparam por `id` (a chave do banco). Objetos ainda não salvos (`id == 0`) comparam por identidade; o id é atribuído pelo MySQL ao gravar.
 
 ---
 
@@ -311,4 +316,5 @@ Design editorial, com traço brutalista refinado. A tela é um documento, não u
 | 1 | Documento de projeto, diagrama de classes e esqueleto em Java | Concluída |
 | 2 | UX/UI: orientações, wireframes, esquema de cores e acessibilidade | Concluída |
 | 3 | Programação das telas em Java, com dados em memória (sem banco) | Concluída |
-| 4 e 5 | Definidas conforme o enunciado de cada etapa | — |
+| 4 | Banco MySQL, acesso por JDBC, dados de teste, código provisório removido | Concluída |
+| 5 | Definida conforme o enunciado da etapa | — |

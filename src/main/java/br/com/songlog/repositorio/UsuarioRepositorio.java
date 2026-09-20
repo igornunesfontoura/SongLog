@@ -1,15 +1,15 @@
 package br.com.songlog.repositorio;
 
 import br.com.songlog.model.Usuario;
-import java.util.List;
 import java.util.Optional;
 
+/** Acesso a usuários; o usuário lido já traz as suas avaliações e o seu diário. */
 public interface UsuarioRepositorio {
-
-    List<Usuario> todos();
 
     Optional<Usuario> porEmail(String email);
 
-    /** Insere (id == 0) ou atualiza. */
+    Optional<Usuario> porId(int id);
+
+    /** Insere o usuário (id == 0) e atribui o id gerado. */
     Usuario salvar(Usuario usuario);
 }

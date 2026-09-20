@@ -6,7 +6,7 @@
 
     <groupId>br.com.songlog</groupId>
     <artifactId>songlog</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <packaging>jar</packaging>
     <name>SongLog</name>
 
@@ -17,21 +17,62 @@
         <exec.mainClass>br.com.songlog.Main</exec.mainClass>
     </properties>
 
-    <!-- Ao integrar o banco: adicionar aqui o mysql-connector-j -->
+    <dependencies>
+        <!-- Driver JDBC do MySQL -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.4.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <!-- os scripts SQL da pasta banco/ vão para dentro do programa: o mesmo arquivo serve ao Workbench e ao SongLog -->
+            <resource>
+                <directory>banco</directory>
+                <targetPath>banco</targetPath>
+                <includes>
+                    <include>01-esquema.sql</include>
+                    <include>02-dados-iniciais.sql</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <!-- JAR único (programa + driver) para "java -jar target/songlog-0.4.0.jar" -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${exec.mainClass}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${exec.mainClass}</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

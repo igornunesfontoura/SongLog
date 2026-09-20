@@ -5,11 +5,11 @@ import static br.com.songlog.view.Preferencias.px;
 import br.com.songlog.model.Album;
 import br.com.songlog.model.Avaliacao;
 import br.com.songlog.model.Faixa;
+import br.com.songlog.model.NotaGeral;
 import br.com.songlog.model.Usuario;
 import br.com.songlog.service.Contexto;
 import br.com.songlog.service.NotaService;
 import br.com.songlog.service.NotaService.NotaAlbum;
-import br.com.songlog.service.NotaService.NotaGeral;
 import br.com.songlog.util.Formatos;
 import br.com.songlog.view.Fontes.Estilo;
 import br.com.songlog.view.componentes.BarraDeNota;
@@ -237,7 +237,7 @@ public class TelaAvaliacao extends JPanel implements Tela {
             suaApoio.add(Ui.coluna(l));
             suaApoio.add(Ui.coluna(Ui.texto("Avalie as " + minha.get().totalFaixas() + " faixas para entrar na nota geral.", Estilo.SMALL, t.ink)));
         }
-        Optional<NotaGeral> geral = NotaService.notaGeral(album, ctx.usuarios.todos());
+        Optional<NotaGeral> geral = ctx.albuns.notaGeral(album); // calculada pelo banco (view vw_nota_geral_album)
         notaGeral.setText(geral.map(g -> Formatos.nota2(g.valor())).orElse("—"));
         notaGeral.setForeground(geral.isPresent() ? t.accent : t.mute);
         geralApoio.setText(geral.map(g -> g.totalAvaliadores() + (g.totalAvaliadores() == 1 ? " avaliador" : " avaliadores")).orElse("sem avaliações completas"));
@@ -414,13 +414,18 @@ public class TelaAvaliacao extends JPanel implements Tela {
         }
 
         void aoMudar(double n) {
-            if (n == 0) {
-                usuario.removerAvaliacao(faixa);
-                nav.status("Nota de “" + faixa.getTitulo() + "” removida.");
-            } else {
-                String c = usuario.getAvaliacaoDe(faixa).map(Avaliacao::getComentario).orElse(null);
-                usuario.avaliar(faixa, n, c);
-                nav.status("Nota de “" + faixa.getTitulo() + "” salva: " + Formatos.nota1(n) + ".");
+            try {
+                if (n == 0) {
+                    ctx.avaliacoes.limpar(usuario, faixa);
+                    nav.status("Nota de “" + faixa.getTitulo() + "” removida.");
+                } else {
+                    String c = usuario.getAvaliacaoDe(faixa).map(Avaliacao::getComentario).orElse(null);
+                    ctx.avaliacoes.avaliar(usuario, faixa, n, c);
+                    nav.status("Nota de “" + faixa.getTitulo() + "” salva: " + Formatos.nota1(n) + ".");
+                }
+            } catch (RuntimeException ex) {
+                atualizar(); // o banco não gravou: a barra volta ao valor que está no banco
+                throw ex;
             }
             atualizar();
             recalcular();
@@ -454,7 +459,7 @@ public class TelaAvaliacao extends JPanel implements Tela {
                 return;
             }
             try {
-                usuario.avaliar(faixa, a.get().getNota(), texto);
+                ctx.avaliacoes.comentar(usuario, faixa, texto);
                 atualizar();
                 nav.status("Comentário da faixa “" + faixa.getTitulo() + "” salvo.");
             } catch (IllegalArgumentException ex) {

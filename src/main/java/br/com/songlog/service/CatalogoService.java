@@ -2,17 +2,13 @@ package br.com.songlog.service;
 
 import br.com.songlog.model.Album;
 import br.com.songlog.model.Faixa;
-import br.com.songlog.model.Usuario;
 import br.com.songlog.repositorio.AlbumRepositorio;
-import br.com.songlog.repositorio.UsuarioRepositorio;
-import br.com.songlog.util.Formatos;
 import br.com.songlog.util.Tempo;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * Regras do catálogo: busca, validação do cadastro (RN01, RN02, RN12), salvamento e
@@ -38,43 +34,22 @@ public class CatalogoService {
     }
 
     private final AlbumRepositorio albuns;
-    private final UsuarioRepositorio usuarios;
 
-    public CatalogoService(AlbumRepositorio albuns, UsuarioRepositorio usuarios) {
+    public CatalogoService(AlbumRepositorio albuns) {
         this.albuns = albuns;
-        this.usuarios = usuarios;
     }
 
     public List<Album> todos() {
         return albuns.todos();
     }
 
-    /** Busca por título, artista ou gênero (sem acentos); {@code genero} vazio ou nulo = todos. */
+    /** Busca por título, artista ou gênero (o MySQL ignora maiúsculas e acentos); {@code genero} vazio = todos. */
     public List<Album> buscar(String texto, String genero) {
-        String q = Formatos.semAcentos(texto == null ? "" : texto.strip());
-        List<Album> saida = new ArrayList<>();
-        for (Album a : albuns.todos()) {
-            boolean generoOk = genero == null || genero.isEmpty()
-                    || (a.getGenero() != null && a.getGenero().equalsIgnoreCase(genero));
-            boolean textoOk = q.isEmpty()
-                    || Formatos.semAcentos(a.getTitulo()).contains(q)
-                    || Formatos.semAcentos(a.getArtista()).contains(q)
-                    || Formatos.semAcentos(a.getGenero() == null ? "" : a.getGenero()).contains(q);
-            if (generoOk && textoOk) {
-                saida.add(a);
-            }
-        }
-        return saida;
+        return albuns.buscar(texto, genero);
     }
 
     public List<String> generos() {
-        TreeSet<String> g = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        for (Album a : albuns.todos()) {
-            if (a.getGenero() != null) {
-                g.add(a.getGenero());
-            }
-        }
-        return new ArrayList<>(g);
+        return albuns.generos();
     }
 
     /** Monta o rascunho de um álbum existente (para edição). */
@@ -170,11 +145,9 @@ public class CatalogoService {
             album.setAnoLancamento(ano);
             album.setGenero(genero);
         }
-        List<Faixa> removidas = new ArrayList<>();
         for (RascunhoFaixa f : r.faixas) {
             if (f.removida && f.existente != null) {
                 album.removerFaixa(f.existente);
-                removidas.add(f.existente);
             }
         }
         for (RascunhoFaixa f : r.faixas) {
@@ -189,40 +162,19 @@ public class CatalogoService {
                 album.adicionarFaixa(f.titulo, segundos);
             }
         }
-        if (!removidas.isEmpty()) {
-            for (Usuario u : usuarios.todos()) {
-                u.removerAvaliacoesDasFaixas(removidas);
-            }
-        }
-        return albuns.salvar(album);
+        return albuns.salvar(album); // as avaliações das faixas removidas saem junto, por ON DELETE CASCADE
     }
 
-    /** RN13: leva junto as faixas, as avaliações dessas faixas e as entradas de diário do álbum. */
+    /** RN13: o banco leva junto as faixas, as avaliações dessas faixas e as entradas de diário do álbum. */
     public void excluir(Album album) {
-        for (Usuario u : usuarios.todos()) {
-            u.removerAvaliacoesDasFaixas(album.getFaixas());
-            u.removerEntradasDoAlbum(album);
-        }
         albuns.excluir(album);
     }
 
     public int quantidadeAvaliacoes(Album album) {
-        int total = 0;
-        for (Usuario u : usuarios.todos()) {
-            for (Faixa f : album.getFaixas()) {
-                if (u.getAvaliacaoDe(f).isPresent()) {
-                    total++;
-                }
-            }
-        }
-        return total;
+        return albuns.contarAvaliacoes(album);
     }
 
     public int quantidadeEntradas(Album album) {
-        int total = 0;
-        for (Usuario u : usuarios.todos()) {
-            total += (int) u.getDiario().stream().filter(e -> e.getAlbum().equals(album)).count();
-        }
-        return total;
+        return albuns.contarEntradas(album);
     }
 }

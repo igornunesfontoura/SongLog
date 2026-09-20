@@ -1,5 +1,7 @@
 # SongLog — Etapa 3: telas e interações em Java
 
+> **Documento histórico.** Descreve a entrega da Etapa 3, com dados em memória. Desde a Etapa 4 os dados vivem no MySQL e o programa é executado como descrito em [`etapa-4-banco-de-dados.md`](etapa-4-banco-de-dados.md); trechos abaixo sobre `Contexto.emMemoria()`, `NotaService.notaGeral` e `java -jar songlog-0.3.0.jar` não valem mais.
+
 Aplicação desktop em **Java Swing**, sem dependências externas (só o JDK 17 ou mais novo), seguindo o projeto de interfaces da Etapa 2. Nesta etapa os dados vivem **em memória**; o MySQL entra trocando apenas as classes de `repositorio`.
 
 ## 1. Como abrir e executar

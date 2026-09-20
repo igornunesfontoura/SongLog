@@ -45,10 +45,10 @@ public class CapturaDeTelas {
         System.setProperty("java.awt.headless", "true");
         saida = new File(args.length > 0 ? args[0] : "target/capturas");
         saida.mkdirs();
-        Contexto ctx = Contexto.emMemoria();
+        Contexto ctx = AmbienteDeTeste.novo();
         ctx.entrar(ctx.usuarios.porEmail("ana@songlog.dev").orElseThrow());
         nav = new NavegadorDeTeste(ctx);
-        Album kob = ctx.albuns.todos().get(0);
+        Album kob = ctx.albuns.buscar("Kind of Blue", "").get(0);
 
         for (Tema tema : Tema.values()) {
             Tema.definir(tema);
@@ -89,6 +89,17 @@ public class CapturaDeTelas {
         capturar("estado-texto-150-avaliacao", () -> new TelaAvaliacao(nav, kob), Aba.CATALOGO, "", 1280, 800, p -> { });
         capturar("estado-texto-150-catalogo", () -> new TelaCatalogo(nav), Aba.CATALOGO, "", 1280, 800, p -> { });
         Preferencias.definirEscala(1.0);
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                JPanel conexao = br.com.songlog.view.dialogo.DialogoConexao.visualParaTeste(
+                        new br.com.songlog.banco.Configuracao("localhost", 3306, "songlog", "root", "", true),
+                        "Erro ao conectar: usuário ou senha do MySQL incorretos (usuário “root”).");
+                java.awt.Dimension pc = conexao.getPreferredSize();
+                gravar("estado-dialogo-conexao", conexao, pc.width, pc.height);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         SwingUtilities.invokeAndWait(() -> {
             try {
                 Botao cancelar = Botao.secundario("Cancelar");

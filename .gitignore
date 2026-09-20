@@ -17,3 +17,6 @@ nb-configuration.xml
 
 # Segredos locais (Etapa 3: credenciais do MySQL)
 *.local.properties
+
+# Conexão local com o MySQL (contém a senha)
+config/songlog.local.properties

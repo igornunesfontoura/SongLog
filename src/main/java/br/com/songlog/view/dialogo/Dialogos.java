@@ -44,7 +44,7 @@ public final class Dialogos {
         a.setBorder(null);
         a.setFont(Estilo.BODY.fonte());
         a.setForeground(Tema.atual().ink);
-        a.setSize(new java.awt.Dimension(px(larguraPx), 1));
+        a.setSize(new java.awt.Dimension(px(larguraPx), Short.MAX_VALUE));
         a.setPreferredSize(new java.awt.Dimension(px(larguraPx), a.getPreferredSize().height));
         return a;
     }
@@ -67,6 +67,14 @@ public final class Dialogos {
         cancelar.addActionListener(e -> d.fechar(false));
         ok.addActionListener(e -> d.fechar(true));
         return d.mostrar();
+    }
+
+    /** Mensagem de erro com um único botão (falhas do banco e erros inesperados). */
+    public static void erro(Window dono, String titulo, String mensagem) {
+        Botao fechar = Botao.primario("Fechar");
+        DialogoBase d = new DialogoBase(dono, titulo, paragrafo(mensagem, 472), fechar, fechar);
+        fechar.addActionListener(e -> d.fechar(true));
+        d.mostrar();
     }
 
     /** RF07: registra uma audição. Devolve {@code true} se registrou. */
